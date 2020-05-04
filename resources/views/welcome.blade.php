@@ -88,7 +88,7 @@
                     @csrf
                     <div class=" ">
                         <div class="form-group">
-                            <input class="form-control" required="" name="phone" type="text" value="٠٧٧١١١٣٠٥٢٤">
+                            <input class="form-control" required="" name="phone" type="text" value="٠٧٧٠١٢٣٤٥٦٧">
                         </div>
 
                     <div class="modal-footer">
