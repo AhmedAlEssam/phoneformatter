@@ -21,17 +21,15 @@ class phoneController extends Controller {
      dump($this->getAllFormats($request->phone,'IQ')));
      session()->flash('status', 'Done');
      return view('welcome');
-   }
-  
-const { findCountryByIso, findCountryByDial } = require("./countries");
-
-class PhoneFormat {
+   } 
+    
+    
   /**
    * ⚡️ Will send you all the number format with the country data
    * @param {string} number accept number too and it's should have the phone number
    * @param {string} iso accept string only, it's should have the country code like iq usa etc...
    */
-  static getAllFormats(number, iso) {
+ public function getAllFormats($number, $iso ) {
     let obj = {};
     number = this.convertNumbers2English(number);
     obj.isNumber = number.match(/[^0-9]/gi) == null;
@@ -57,7 +55,7 @@ class PhoneFormat {
    * 🌏 Will try to know what country the number is belong to
    * @param {string} number accept number too and it's should have the phone number
    */
-  static knowCountry(number) {
+private function knowCountry($number) {
     number = this.convertNumbers2English(number);
     number = number.toString().replace(/[^0-9]/gi, "");
     if (`${number[0]}${number[1]}` == "00") number = number.substr(2);
@@ -72,7 +70,7 @@ class PhoneFormat {
    * 🧼 Will send a clean number without the extra keys
    * @param {string} number accept number too and it's should have the phone number
    */
-  static normalize(phoneNumber) {
+private function normalize($phoneNumber) {
     return phoneNumber.replace(
       /^[\+\d{1,3}\-\s]*\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,
       "$1$2$3"
@@ -83,7 +81,7 @@ class PhoneFormat {
    * 😎 Will give you the cool formats for the number like '(964) 781-****'
    * @param {string} number accept number too and it's should have the phone number
    */
-  static format(phoneNumber, formatString, options) {
+private function format($phoneNumber, $formatString, $options =null) {
     // Normalize the phone number first unless not asked to do so in the options
     if (!options || !options.normalize) {
       phoneNumber = this.normalize(phoneNumber);
@@ -98,7 +96,7 @@ class PhoneFormat {
    * 👳🏽‍♀️Arabic numbers to English
    * @param {String} string Any string
    */
-  static convertNumbers2English(string) {
+ private function convertNumbers2English($string) {
     return string
       .replace(/[٠١٢٣٤٥٦٧٨٩]/g, function(c) {
         return c.charCodeAt(0) - 1632;
@@ -107,7 +105,11 @@ class PhoneFormat {
         return c.charCodeAt(0) - 1776;
       });
   }
+    
+private function findCountryByIso($iso){
 }
 
-module.exports = PhoneFormat;
+private function findCountryByDial($dial){
+}
+ 
 }
