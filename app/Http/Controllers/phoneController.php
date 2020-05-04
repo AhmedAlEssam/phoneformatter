@@ -1,3 +1,28 @@
+<?php
+
+namespace App\Http\Controllers;
+
+// use App\Http\Controllers\Controller;
+
+use App\Classes\CountriesList;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+class phoneController extends Controller {
+
+    protected $countries;
+    public function __construct() {
+        $CountriesList = new CountriesList();
+        $this->countries = $CountriesList->list();
+    }
+  
+   function index(Request $request ){
+     $number = $request->phone? $request->phone: '07700000000';
+     dump($this->getAllFormats($request->phone,'IQ')));
+     session()->flash('status', 'Done');
+     return view('welcome');
+   }
+  
 const { findCountryByIso, findCountryByDial } = require("./countries");
 
 class PhoneFormat {
@@ -85,3 +110,4 @@ class PhoneFormat {
 }
 
 module.exports = PhoneFormat;
+}
