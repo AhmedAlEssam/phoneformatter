@@ -30,25 +30,25 @@ class phoneController extends Controller {
    * @param {string} iso accept string only, it's should have the country code like iq usa etc...
    */
  public function getAllFormats($number, $iso ) {
-    let obj = {};
-    number = this.convertNumbers2English(number);
-    obj.isNumber = number.match(/[^0-9]/gi) == null;
-    number = number.toString().replace(/[^0-9]/gi, "");
-    number = this.normalize(number);
-    let country = findCountryByIso(iso);
-    let cleanNumber = this.normalize(number);
-    let globalK = country.dial + cleanNumber;
+    $obj =[];
+    $number = $this->convertNumbers2English($number); 
+    $obj['isNumber'] =$number == Str::of($number)->replaceMatches('/[^0-9]++/','');
+    $number = Str::of($number)->replaceMatches('/[^0-9]++/', ''); 
+    $number = $this->normalize($number);
+    $country = $this->findCountryByIso($iso);
+    $clearNumber = $number;
+    $globalK = $country['dial'] . $clearNumber;
 
-    obj.globalZ = "00" + country.dial + cleanNumber;
-    obj.globalP = "+" + country.dial + cleanNumber;
-    obj.globalK = globalK;
-    obj.domestic = "0" + cleanNumber;
-    obj.domestic2 = cleanNumber;
-    obj.format1 = this.format(globalK, "(NNN) NNN-NNNN");
-    obj.format2 = this.format(globalK, "NNN.NNN.NNNN");
-    obj.country = country;
+    $obj['globalZ'] = "00".$country['dial']  . $clearNumber;
+    $obj['globalP'] = "+" . $country['dial'] . $clearNumber;
+    $obj['globalK'] = $globalK;
+    $obj['domistic'] = "0" . $clearNumber;
+    $obj['domistic2'] = $clearNumber;
+    $obj['format1'] = $this->format($globalK, "(NNN) NNN-NNNN");
+    $obj['format2'] = $this->format($globalK, "NNN.NNN.NNNN");
+    $obj['country'] = $country;
 
-    return obj;
+    return $obj; 
   }
 
   /**
@@ -56,13 +56,13 @@ class phoneController extends Controller {
    * @param {string} number accept number too and it's should have the phone number
    */
 private function knowCountry($number) {
-    number = this.convertNumbers2English(number);
-    number = number.toString().replace(/[^0-9]/gi, "");
-    if (`${number[0]}${number[1]}` == "00") number = number.substr(2);
-    let str = "";
-    for (let i = 0; i < 7; i++) {
-      str = str + number[i];
-      if (findCountryByDial(str)) return findCountryByDial(str);
+    $number = $this->convertNumbers2English($number);
+    $number = Str::of( $number)->replaceMatches('/[^0-9]++/', '');
+    if (`${number[0]}${number[1]}` == "00")  $number = array_shift(array_shift($number));   
+    $str = "";  
+    for ($i = 0; $i < 7; $i++) { 
+      $str = $str . $number[i]; 
+      if ($this->findCountryByDial($str)) return $this->findCountryByDial($str);
     }
   }
 
@@ -71,8 +71,8 @@ private function knowCountry($number) {
    * @param {string} number accept number too and it's should have the phone number
    */
 private function normalize($phoneNumber) {
-    return phoneNumber.replace(
-      /^[\+\d{1,3}\-\s]*\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,
+    return Str::of($phoneNumber)->replaceMatches(
+      '/^[\+\d{1,3}\-\s]*\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/',
       "$1$2$3"
     );
   }
@@ -83,13 +83,14 @@ private function normalize($phoneNumber) {
    */
 private function format($phoneNumber, $formatString, $options =null) {
     // Normalize the phone number first unless not asked to do so in the options
-    if (!options || !options.normalize) {
-      phoneNumber = this.normalize(phoneNumber);
+    if (!$options || !$options['normalize']) {
+      $phoneNumber = $this->normalize($phoneNumber);
     }
-    for (var i = 0, l = phoneNumber.length; i < l; i++) {
-      formatString = formatString.replace("N", phoneNumber[i]);
+    $phoneNumber = str_split($phoneNumber, 1)  ;
+     for ($i = 0;  $i < strlen($phoneNumber); $i++) {
+       $formatString = Str::of($formatString)->replaceMatches( '#N#', $phoneNumber[$i] ,1);
     }
-    return formatString;
+    return $formatString;
   }
 
   /**
@@ -97,19 +98,20 @@ private function format($phoneNumber, $formatString, $options =null) {
    * @param {String} string Any string
    */
  private function convertNumbers2English($string) {
-    return string
-      .replace(/[٠١٢٣٤٥٦٧٨٩]/g, function(c) {
-        return c.charCodeAt(0) - 1632;
-      })
-      .replace(/[۰۱۲۳۴۵۶۷۸۹]/g, function(c) {
-        return c.charCodeAt(0) - 1776;
-      });
+ return strtr($string, 
+ array('۰'=>'0', '۱'=>'1', '۲'=>'2', '۳'=>'3', '۴'=>'4', '۵'=>'5', '۶'=>'6', '۷'=>'7', '۸'=>'8', '۹'=>'9',
+       '٠'=>'0', '١'=>'1', '٢'=>'2', '٣'=>'3', '٤'=>'4', '٥'=>'5', '٦'=>'6', '٧'=>'7', '٨'=>'8', '٩'=>'9'));
   }
     
 private function findCountryByIso($iso){
+    $this->iso = strtoupper($iso);
+    return Arr::first($this->countries, function ($value, $key) use ($iso) { return $value['iso2'] == $this->iso; });
+
+
 }
 
 private function findCountryByDial($dial){
 }
- 
+ $result = Arr::where($countries , function ($value, $key)use ($dial) { return $value['dial'] == $dial; });
+    return $result;
 }
