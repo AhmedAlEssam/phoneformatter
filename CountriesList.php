@@ -1,4 +1,17 @@
-let countries = [
+<?php
+
+namespace App\Classes;
+
+class CountriesList {
+
+    protected $countriesList;
+
+    public function __construct() {
+        $this->countriesList =[ ];
+    }
+
+    public static function list(){
+        return [
    { 
       "iso2":"BD",
       "name":"Bangladesh",
@@ -2514,15 +2527,9 @@ let countries = [
       "capital":"Maputo",
       "continent":"AF"
    }
-];
+];}
 
 
-module.exports.findCountryByIso = findCountryByIso = iso => {
-   iso = iso.toUpperCase();
-   return countries.find(country => country.iso2 == iso)
-};
-
-module.exports.findCountryByDial = findCountryByDial = dial =>
- countries.find(country => country.dial == dial)
+}
 
 
